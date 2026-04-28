@@ -10,7 +10,8 @@ PluginProcessor::PluginProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+apvts (*this, nullptr, "parameters", createParameterLayout())
 {
 }
 
@@ -18,6 +19,35 @@ PluginProcessor::~PluginProcessor()
 {
 }
 
+juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    //add the parameters: depth, rate, mix
+
+    layout.add(std::make_unique < juce::AudioParameterFloat>(
+        "depth",
+        "Depth",
+        juce::NormalisableRange<float>(5.0f, 20.0f, 0.1f),
+        5.0f
+        ));
+
+    layout.add(std::make_unique < juce::AudioParameterFloat>(
+        "rate",
+        "Rate",
+        juce::NormalisableRange<float>(0.1f, 5.0f, 0.01f),
+        2.5
+        ));
+
+    layout.add(std::make_unique < juce::AudioParameterFloat>(
+        "mix",
+        "Mix",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f),
+        0.5f
+        ));
+
+    return layout;
+}
 //==============================================================================
 const juce::String PluginProcessor::getName() const
 {
