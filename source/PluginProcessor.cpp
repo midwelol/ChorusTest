@@ -118,7 +118,13 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    juce::ignoreUnused (sampleRate, samplesPerBlock);
+    juce::dsp::ProcessSpec spec;
+
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
+
+    chorus.prepare(spec);
 }
 
 void PluginProcessor::releaseResources()
@@ -153,7 +159,6 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages)
 {
     juce::ignoreUnused (midiMessages);
-
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -179,6 +184,11 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         juce::ignoreUnused (channelData);
         // ..do something to the data...
     }
+    chorus.setMix (*apvts.getRawParameterValue ("mix"));
+    chorus.setDepth (*apvts.getRawParameterValue ("depth"));
+    chorus.setRate (*apvts.getRawParameterValue ("rate"));
+
+    chorus.process(buffer);
 }
 
 //==============================================================================
