@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "DSP/Chorus.h"
 
 #if (MSVC)
 #include "ipps.h"
@@ -41,6 +42,8 @@ public:
     juce::AudioProcessorValueTreeState apvts;
 
 private:
+    Chorus chorus;
+
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
